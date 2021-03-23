@@ -1,65 +1,112 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+//npm install -g create-next-app
+//create-next-app .........
+//npm install next react react-dom
+//npm i -s axios
+//npm i -s swr
 
+import axios from 'axios'
+import styles from '../styles/Pet.module.css'
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+
+const URL = 'http://localhost:3001/api/pets'
 export default function Home() {
+  const [pets, setPets] = useState({})
+  const [pet, setPet] = useState({})
+  const [type, Type] = useState('')
+  const [age, setAge] = useState()
+  const [weight, setWeight] = useState()
+  const [price, setPrice] = useState()
+
+
+
+  console.log("pp", pets);
+  const getpets = async () => {   //async
+    let result = await axios.get(URL)   //awit
+    //console.log(result.data); 
+    setPets(result.data.list)
+  }
+  const showPets = () => {
+    if (pets && pets.length) {
+      return pets.map((item, index) => {
+        return (<li key={index}>
+          price {item.price}  <br />
+           weight {item.weight}   <br />
+           age {item.age} <br />
+           type {item.type}
+
+
+        </li>)
+      })
+    }
+    else {
+      <div>No Pett</div>
+    }
+  }
+
+  const getPetsby = async (id) => {
+    let pets = await axios.get(`${URL}/${id}`)     //axios => .data
+    setPet(pets.data)
+    //console.log(product);
+  }
+
+
+  const deletePetsby = async (id) => {
+    let pet = await axios.delete(`${URL}/${id}`)
+    getpets()
+  }
+
+  const updatePetsby = async (id) => {
+    let pets = await axios.put(`${URL}/${id}`, { price, weight, age, type })
+    getpets()
+  }
+
+  const addPetsby = async (price, weight, age, type) => {
+    let pets = await axios.post(URL, { price, weight, age, type })
+    getpets()
+  }
+
+  useEffect(() => {
+    getpets()
+  }, [])
+
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+      <h2>PET SHOP</h2>
+      <div>
+        <div className={styles.list}>
+          <ul className={styles.listItem}>{showPets()}</ul>
         </div>
-      </main>
+      </div>
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+      <div>
+        <button className={styles.blue}>Buy</button>  <br />
+      </div>
+
+
+      <button onClick={() => getPetsby(item.id)}>Get</button>
+      <button onClick={() => deletePetsby(item.id)}> Delete </button>
+      <button onClick={() => updatePetsby(item.id)}>Update</button>
     </div>
   )
 }
+
+
+/*
+
+
+<div className={styles.container}>PET SHOP
+
+type<input type="text" onChange={(e) => settype(e.target.value)} /> <br />
+age <input type="number" onChange={(e) => setAge(e.target.value)} /> <br />
+weight<input type="number" onChange={(e) => setWeight(e.target.value)} /> <br />
+price<input type="number" onChange={(e) => setPrice(e.target.value)} /> <br />
+
+          <button onClick={() => getPetsby(item.id)}>Get</button>
+          <button onClick={() => deletePetsby(item.id)}> Delete </button>
+          <button onClick={() => updatePetsby(item.id)}>Update</button>
+
+
+          <button onClick={() => addPetsby(type, age, weight, price)}>Buy</button>  <br />
+
+*/

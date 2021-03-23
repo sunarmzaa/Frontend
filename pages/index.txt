@@ -1,0 +1,101 @@
+//npm install -g create-next-app
+//create-next-app .........
+//npm install next react react-dom
+//npm i -s axios
+//npm i -s swr
+
+import axios from 'axios'
+import styles from '../styles/Home.module.css'
+import { useEffect, useState } from 'react'
+const URL = 'http://localhost:6969/api/products'
+export default function Home() {
+  const [products, setProducts] = useState({})
+  const [product, setProduct] = useState({})
+  const [name, setName] = useState('')
+  const [price, setPrice] = useState()
+  const [amount, setAmount] = useState()
+
+
+
+  console.log("pp", products);
+  const getproducts = async () => {   //async
+    let result = await axios.get(URL)   //awit
+    //console.log(result.data); 
+    setProducts(result.data.list)
+  }
+  const showProducts = () => {
+    if (products && products.length) {
+      return products.map((item, index) => {
+        return (<li key={index}>
+          {item.name} : {item.price} : {item.amount}
+          <button onClick={() => getProductby(item.id)}>Get</button>
+
+          <button onClick={() => deleteProductby(item.id)}> Delete </button>
+
+          <button onClick={() => updateProductby(item.id)}>Update</button>
+
+        </li>)
+      })
+    }
+    else {
+      <div>No Product</div>
+    }
+  }
+
+  const getProductby = async (id) => {
+    let product = await axios.get(`${URL}/${id}`)     //axios => .data
+    setProduct(product.data)
+    //console.log(product);
+  }
+
+
+  const deleteProductby = async (id) => {
+    let product = await axios.delete(`${URL}/${id}`)
+    getproducts()
+  }
+
+
+  const updateProductby = async(id) => {
+    let product = await axios.put(`${URL}/${id}`, {name,price,amount})
+    getproducts()
+  }
+
+
+
+  const addProductby = async (name, price,amount) => {
+    let product = await axios.post(URL, { name, price,amount })
+    getproducts()
+  }
+
+
+  useEffect(() => {
+    getproducts()
+  }, [])
+
+  return (
+    <div >Products
+      <ul>{showProducts()}</ul>
+      <div>
+        product select is : {product.name} {product.price} {product.amount}
+      </div>
+      <div>
+        name<input type="text" onChange={(e) =>  setName(e.target.value )}/> <br />
+        price <input type="number" onChange={(e) =>  setPrice(e.target.value )}/> <br />
+        amount<input type="number" onChange={(e) =>  setAmount(e.target.value )}/> <br />
+
+        <button onClick={() => addProductby(name, price,amount)}>Add</button>
+      </div>
+    </div>
+  )
+}
+
+
+
+
+
+const index2 = () => {
+    return ( <div>
+        index2
+    </div>)
+}
+export default index2

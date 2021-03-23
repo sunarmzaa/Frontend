@@ -7,6 +7,12 @@
   align-items: center;
 }
 
+.swr{
+  color: aqua;
+  background-color: #0070f3;
+  
+}
+
 .main {
   padding: 5rem 0;
   flex: 1;
